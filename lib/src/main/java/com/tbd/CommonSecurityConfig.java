@@ -17,6 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class CommonSecurityConfig {
 
+    @Value("${spring.application.name}")
+    private String appName;
+
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
@@ -29,7 +32,7 @@ public class CommonSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/internal/users/**").permitAll()
+                        .requestMatchers("/api/internal/users/**", "/" + appName + "/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth -> oauth
