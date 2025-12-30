@@ -1,5 +1,6 @@
 package com.tbd;
 
+import com.tbd.filter.InternalSecretFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @AutoConfiguration
 @EnableWebSecurity
@@ -26,11 +28,16 @@ public class CommonSecurityConfig {
     @Value("${app.jwt.issuer}")
     private String jwtIssuer;
 
+    @Value("${app.api.endpoint.secret}")
+    private String apiSecret;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new InternalSecretFilter(apiSecret), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/internal/users/**", "/" + appName + "/actuator/**").permitAll()
                         .anyRequest().authenticated()
