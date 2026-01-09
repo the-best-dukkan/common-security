@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.tbd'
-version = '1.0.3'
+version = '1.0.4'
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
@@ -65,7 +65,7 @@ publishing {
             // This is the "common-security" part
             artifactId = 'common-security'
 
-            version = '1.0.3'
+            version = '1.0.4'
 
         }
     }
